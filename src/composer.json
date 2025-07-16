@@ -1,9 +1,16 @@
 {
-    "name": "safeno/clube-full-stack_php-tolaravel",
-    "require-dev": {
-        "symfony/var-dumper": "^7.3"
-    },
-    "require": {
-        "fakerphp/faker": "^1.24"
+  "name": "safeno/clube-full-stack_php-tolaravel",
+  "require-dev": {
+    "symfony/var-dumper": "^7.3",
+    "fakerphp/faker": "^1.24"
+  },
+  "autoload": {
+    "psr-4": {
+      "app\\": "app/",
+      "core\\": "core/"
     }
+  },
+  "require": {
+    "vlucas/phpdotenv": "^5.6"
+  }
 }
