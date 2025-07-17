@@ -10,6 +10,10 @@
       "core\\": "core/"
     }
   },
+  "files": [
+    "core/helpers/constants.php",
+    "core/helpers/functions.php"
+  ],
   "require": {
     "vlucas/phpdotenv": "^5.6"
   }
