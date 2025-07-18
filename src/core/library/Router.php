@@ -2,11 +2,19 @@
 
 namespace core\library;
 
+use DI\Container;
+use core\exceptions\ControllerNotFoundException;
+
 class Router
 {
   protected $routes = [];
   protected ?string $controller = null;
   protected string $action;
+  protected array $paramaters = [];
+
+  public function __construct(
+    private Container $container
+  ) {} //? construct
 
   public function add(
     string $method,
@@ -34,24 +42,35 @@ class Router
       }
 
       $pattern = str_replace('/', '\/', trim($uri, '/'));
-      if ($uri !== '/' && preg_match("/^$pattern$/", trim(REQUEST_URI, '/'), $matches)) {
+      if ($uri !== '/' && preg_match("/^$pattern$/", trim(REQUEST_URI, characters: '/'), $this->paramaters)) {
         [$this->controller, $this->action] = $route;
-        unset($matches[0]);
+        unset($this->paramaters[0]);
         break;
       }
     }
 
     if ($this->controller) {
 
-      return $this->handleController();
+      return $this->handleController(
+        $this->controller,
+        $this->action,
+        $this->paramaters
+      );
     }
 
     return $this->handleNotFound();
   } //? handleUri
 
-  private function handleController()
-  {
-    dump('Found Controller');
+  private function handleController(
+    string $controller,
+    string $action,
+    array $parameters
+  ) {
+    if (!class_exists($controller) || !method_exists($controller, $action)) {
+      throw new ControllerNotFoundException("[$controller::$action] has not exist.");
+    }
+    $controller = $this->container->get($controller);
+    $this->container->call([$controller, $action], [...$parameters]);
   } //? handleController
 
   private function handleNotFound()
